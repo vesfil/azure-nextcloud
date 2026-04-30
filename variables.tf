@@ -4,7 +4,7 @@
 variable "location" {
   description = "Azure регион"
   type        = string
-  default     = "switzerlandnorth"
+  default     = "francecentral"
 }
 
 variable "resource_group_name" {
@@ -25,7 +25,7 @@ variable "vm_name" {
 variable "vm_size" {
   description = "Размер на VM (Standard_B1s е най-евтиният)"
   type        = string
-  default     = "Standard_B1ls"
+  default     = "Standard_B1s"
 }
 
 variable "os_disk_size_gb" {
