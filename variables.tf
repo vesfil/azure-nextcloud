@@ -4,7 +4,7 @@
 variable "location" {
   description = "Azure регион"
   type        = string
-  default     = "denmarkeast"
+  default     = "swedencentral"
 }
 
 variable "resource_group_name" {
@@ -23,7 +23,7 @@ variable "vm_name" {
 }
 
 variable "vm_size" {
-  description = "Размер на VM (Standard_B1s е най-евтиният)"
+  description = "Размер на VM (Standard_B2s е най-евтиният)"
   type        = string
   default     = "Standard_B1ms"
 }

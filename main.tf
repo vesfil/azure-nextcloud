@@ -154,7 +154,7 @@ resource "azurerm_linux_virtual_machine" "main" {
   name                = "vm-nextcloud-${random_string.suffix.result}"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
-  size                = "Standard_B1ms"
+  size                = "Standard_B2s"
   
   admin_username = "azureuser"
   
