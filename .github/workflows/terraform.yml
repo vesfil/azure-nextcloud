@@ -1,0 +1,67 @@
+name: "Terraform Nextcloud"
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    name: "Terraform Apply"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.0"
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: |
+            {
+              "clientId": "${{ secrets.AZURE_CLIENT_ID }}",
+              "clientSecret": "${{ secrets.AZURE_CLIENT_SECRET }}",
+              "tenantId": "${{ secrets.AZURE_TENANT_ID }}",
+              "subscriptionId": "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+            }
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Upload SSH Key as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nextcloud-ssh-key
+          path: nextcloud-ssh-key.pem
+          retention-days: 7
+
+      - name: Show Outputs
+        run: |
+          echo "### Nextcloud Deployment Info" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Output | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          
+          NEXTCLOUD_URL=$(terraform output -raw nextcloud_url 2>/dev/null || echo "pending")
+          SSH_CMD=$(terraform output -raw ssh_command 2>/dev/null || echo "pending")
+          RG_NAME=$(terraform output -raw resource_group_name 2>/dev/null || echo "pending")
+          
+          echo "| Nextcloud URL | [$NEXTCLOUD_URL]($NEXTCLOUD_URL) |" >> $GITHUB_STEP_SUMMARY
+          echo "| SSH Command | \`$SSH_CMD\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Resource Group | \`$RG_NAME\` |" >> $GITHUB_STEP_SUMMARY
