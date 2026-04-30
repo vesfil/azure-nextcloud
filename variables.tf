@@ -25,7 +25,7 @@ variable "vm_name" {
 variable "vm_size" {
   description = "Размер на VM (Standard_B1s е най-евтиният)"
   type        = string
-  default     = "Standard_B1s"
+  default     = "Standard_B1ls"
 }
 
 variable "os_disk_size_gb" {
